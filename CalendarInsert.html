@@ -215,6 +215,16 @@
 	  function display() {
 		document.getElementById('content').innerHTML = '';
 		document.getElementById("myTable").innerHTML = '<tr><td>Group</td><td>Minutes</td></tr>';
+		
+		mapArr.sort(function(a,b){ 
+			if(isNaN(a.value)){
+				return 1;
+			} 
+			if(isNaN(b.value)){
+				return -1;
+			} 
+			return b.value - a.value;});
+		
 		for(i=0; i<mapArr.length;i++) {
 			//appendPre(mapArr[i].key + '\t\t\t' + mapArr[i].value);
 			document.getElementById("myTable").insertRow(-1).innerHTML = '<td>' + mapArr[i].key +'</td><td>'+(isNaN(mapArr[i].value) ? 0 : mapArr[i].value) +'</td>';
@@ -278,7 +288,7 @@
 			map = null;
 			for(j=0; j<mapArr.length;j++) {
 				nd = new Date(eventArr[i].created);
-				day = nd.getDay();
+				day = getDayForNumber(nd.getDay());
 				if(mapArr[j].key == day) {
 					map = mapArr[j];
 					break;
@@ -288,6 +298,7 @@
 				map = new Object();
 				nd = new Date(eventArr[i].created);
 				day = nd.getDay();
+				day = getDayForNumber(day);
 				map.key = day;
 				map.value = 0;
 				mapArr.push(map);
@@ -297,6 +308,33 @@
 			map.value += (endDate - startDate) / (1000 * 60);
 		}
 		
+	  }
+	  
+	  function getDayForNumber(day) {
+	  switch(day) {
+		case 1:
+			return "Monday";
+			break;
+		case 2:
+			return "Tuseday";
+			break;
+		case 3:
+			return "Wednesday";
+			break;
+		case 4:
+			return "Thrusday";
+			break;
+		case 5:
+			return "Friday";
+			break;
+		case 6:
+			return "Saturday";
+			break;
+		default:
+			return "Sunday";
+			break;
+		}
+		return ""
 	  }
 	  /*function loadChar() {
 			var options = {
