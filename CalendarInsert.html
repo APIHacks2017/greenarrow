@@ -1,10 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
+<style>
+#chartdiv {
+  width: 100%;
+  height: 500px;
+}
+</style>
 <title>Google Calendar API Quickstart</title>
 <meta charset='utf-8' />
+<script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+<script src="https://www.amcharts.com/lib/3/pie.js"></script>
+<script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+<link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+<script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
 <script type="text/javascript" src="jquery-1.min.js"></script>
-<script type="text/javascript" src="jquery.canvasjs.min.js"></script>
 <script type="text/javascript">
 
 
@@ -165,6 +175,7 @@
         gapi.client.calendar.events.list({
           'calendarId': 'primary',
           'timeMin': (new Date(new Date().getDate() - parseInt(days))).toISOString(),
+		  'timeMax' :(new Date).toISOString(),
           'showDeleted': false,
           'singleEvents': true,
           'maxResults': 200,
@@ -225,14 +236,34 @@
 			} 
 			return b.value - a.value;});
 		
+		var chartObj = {};
+		
+		var charts = [mapArr.length];
 		for(i=0; i<mapArr.length;i++) {
-			//appendPre(mapArr[i].key + '\t\t\t' + mapArr[i].value);
 			document.getElementById("myTable").insertRow(-1).innerHTML = '<td>' + mapArr[i].key +'</td><td>'+(isNaN(mapArr[i].value) ? 0 : mapArr[i].value) +'</td>';
-			/*dt = new Object();
-			dt.x = mapArr[i].key;
-			dt.y = mapArr[j].value;
-			dts.push(dt);*/
+			if(!isNaN(mapArr[i].value)) {
+				obj = new Object();
+				obj.group = mapArr[i].key;
+				obj.minutes = mapArr[i].value;
+				charts[i] = obj;
+			}
 		}
+		
+		chartArr = [{"coutry" : "India", "litres" : 200},{"coutry" : "India2", "litres" : 300},{"coutry" : "India3", "litres" : 400}];
+		
+		var chart = AmCharts.makeChart( "chartdiv", {
+			  "type": "pie",
+			  "theme": "light",
+			  "dataProvider": charts,
+  "valueField": "minutes",
+  "titleField": "group",
+			   "balloon":{
+			   "fixedPosition":true
+			  },
+			  "export": {
+				"enabled": true
+			  }
+			} );
 		
 		
 	  }
@@ -373,6 +404,6 @@
 	<table id="myTable"></table>
 	</div>
 	
-	<div id="chartContainer" style="height: 300px; width: 100%;"></div>
+	<div id="chartdiv"></div>
 </body>
 </html>
