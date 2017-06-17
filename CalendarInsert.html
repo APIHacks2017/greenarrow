@@ -161,10 +161,10 @@
 		
 		function listUpcomingEvents() {
 		
-		
+		var days = document.getElementById("lastDays").value;
         gapi.client.calendar.events.list({
           'calendarId': 'primary',
-          'timeMin': (new Date(new Date().getDate() - 10)).toISOString(),
+          'timeMin': (new Date(new Date().getDate() - parseInt(days))).toISOString(),
           'showDeleted': false,
           'singleEvents': true,
           'maxResults': 200,
@@ -217,7 +217,7 @@
 		document.getElementById("myTable").innerHTML = '<tr><td>Group</td><td>Minutes</td></tr>';
 		for(i=0; i<mapArr.length;i++) {
 			//appendPre(mapArr[i].key + '\t\t\t' + mapArr[i].value);
-			document.getElementById("myTable").insertRow(-1).innerHTML = '<td>' + mapArr[i].key +'</td><td>'+mapArr[i].value +'</td>';
+			document.getElementById("myTable").insertRow(-1).innerHTML = '<td>' + mapArr[i].key +'</td><td>'+(isNaN(mapArr[i].value) ? 0 : mapArr[i].value) +'</td>';
 			/*dt = new Object();
 			dt.x = mapArr[i].key;
 			dt.y = mapArr[j].value;
@@ -323,6 +323,7 @@
 	</script>
 	
 	
+	Last how many days : <input type="text" value="10" id="lastDays"/>
 	<input type="button" value="Get Events" onclick="listUpcomingEvents()"/>
 	<div id="whatToDo" style="visibility:hidden">
 	<input type="button" value="Time Spent by Events" onclick="timeSpentByEvents();display()" />
