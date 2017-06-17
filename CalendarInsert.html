@@ -3,6 +3,13 @@
 <head>
 <title>Google Calendar API Quickstart</title>
 <meta charset='utf-8' />
+<script type="text/javascript" src="jquery-1.min.js"></script>
+<script type="text/javascript" src="jquery.canvasjs.min.js"></script>
+<script type="text/javascript">
+
+
+
+</script>
 </head>
 <body>
 	<p>Google Calendar API Quickstart</p>
@@ -13,8 +20,11 @@
 
 	<pre id="content"></pre>
 
+
 	<script type="text/javascript">
-	
+
+
+	dts = new Array();
 	  var eventArr = new Array();
 	  var mapArr = new Array();
 		// Client ID and API key from the Developer Console
@@ -171,15 +181,17 @@
               if (!when) {
                 when = event.start.date;
               }
-              appendPre(event.summary + ' (' + when + ')')
+              //appendPre(event.summary + ' (' + when + ')')
             }
           } else {
-            appendPre('No upcoming events found.');
+            //appendPre('No upcoming events found.');
           }
         });
+		document.getElementById("whatToDo").style.visibility = "";
       }
 	  
 	  function timeSpentByEvents(){
+		mapArr = new Array();
 		for(i=0;i<eventArr.length;i++){
 			map = null;
 			for(j=0; j<mapArr.length;j++) {
@@ -199,6 +211,109 @@
 			map.value += (endDate - startDate) / (1000 * 60);
 		}
 	  }
+	  
+	  function display() {
+		document.getElementById('content').innerHTML = '';
+		document.getElementById("myTable").innerHTML = '<tr><td>Group</td><td>Minutes</td></tr>';
+		for(i=0; i<mapArr.length;i++) {
+			//appendPre(mapArr[i].key + '\t\t\t' + mapArr[i].value);
+			document.getElementById("myTable").insertRow(-1).innerHTML = '<td>' + mapArr[i].key +'</td><td>'+mapArr[i].value +'</td>';
+			/*dt = new Object();
+			dt.x = mapArr[i].key;
+			dt.y = mapArr[j].value;
+			dts.push(dt);*/
+		}
+		
+		
+	  }
+	  
+	  function timeSpentonPeople(){
+		mapArr = new Array();
+		for(i=0;i<eventArr.length;i++){
+			map = null;
+			for(j=0; j<mapArr.length;j++) {
+				if(mapArr[j].key == eventArr[i].creator.displayName) {
+					map = mapArr[j];
+					break;
+				}
+			}
+			if(map == null) {
+				map = new Object();
+				map.key = eventArr[i].creator.displayName;
+				map.value = 0;
+				mapArr.push(map);
+			}
+			startDate = new Date(eventArr[i].start.dateTime);
+			endDate = new Date(eventArr[i].end.dateTime);
+			map.value += (endDate - startDate) / (1000 * 60);
+		}
+		
+	  }
+	  
+	  function timeSpentOnTopics(){
+		mapArr = new Array();
+		for(i=0;i<eventArr.length;i++){
+			map = null;
+			for(j=0; j<mapArr.length;j++) {
+				if(mapArr[j].key == eventArr[i].creator.displayName) {
+					map = mapArr[j];
+					break;
+				}
+			}
+			if(map == null) {
+				map = new Object();
+				map.key = eventArr[i].creator.displayName;
+				map.value = 0;
+				mapArr.push(map);
+			}
+			startDate = new Date(eventArr[i].start.dateTime);
+			endDate = new Date(eventArr[i].end.dateTime);
+			map.value += (endDate - startDate) / (1000 * 60);
+		}
+		
+	  }
+	  function timeSpentOnDays(){
+		mapArr = new Array();
+		for(i=0;i<eventArr.length;i++){
+			map = null;
+			for(j=0; j<mapArr.length;j++) {
+				nd = new Date(eventArr[i].created);
+				day = nd.getDay();
+				if(mapArr[j].key == day) {
+					map = mapArr[j];
+					break;
+				}
+			}
+			if(map == null) {
+				map = new Object();
+				nd = new Date(eventArr[i].created);
+				day = nd.getDay();
+				map.key = day;
+				map.value = 0;
+				mapArr.push(map);
+			}
+			startDate = new Date(eventArr[i].start.dateTime);
+			endDate = new Date(eventArr[i].end.dateTime);
+			map.value += (endDate - startDate) / (1000 * 60);
+		}
+		
+	  }
+	  /*function loadChar() {
+			var options = {
+					title: {
+						text: "Column Chart using jQuery Plugin"
+					},
+							animationEnabled: true,
+					data: [
+					{
+						type: "column", //change it to line, area, bar, pie, etc
+						dataPoints: dts;
+					}
+					]
+				};
+
+				$("#chartContainer").CanvasJSChart(options);
+		}*/
 	</script>
 
 	<script async defer src="https://apis.google.com/js/api.js"
@@ -207,7 +322,18 @@
 		
 	</script>
 	
+	
 	<input type="button" value="Get Events" onclick="listUpcomingEvents()"/>
-	<input type="button" value="Time Spent by events" onclick="timeSpentByEvents()" />
+	<div id="whatToDo" style="visibility:hidden">
+	<input type="button" value="Time Spent by Events" onclick="timeSpentByEvents();display()" />
+	<input type="button" value="Time Spent on People" onclick="timeSpentonPeople();display()" />
+	<input type="button" value="Time Spent by Days" onclick="timeSpentOnDays();display()" />
+	</div>
+	
+	<div>
+	<table id="myTable"></table>
+	</div>
+	
+	<div id="chartContainer" style="height: 300px; width: 100%;"></div>
 </body>
 </html>
